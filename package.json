@@ -1,0 +1,25 @@
+{
+  "name": "shop-server",
+  "version": "1.0.0",
+  "description": "Emporium server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegoPanino/shop-server.git"
+  },
+  "author": "diegoPanino",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diegoPanino/shop-server/issues"
+  },
+  "homepage": "https://github.com/diegoPanino/shop-server#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "knex": "^0.95.14",
+    "nodemon": "^2.0.15"
+  }
+}
