@@ -4,7 +4,9 @@
   "description": "Emporium server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon server.js",
+    "authServer": "nodemon authServer.js"
   },
   "repository": {
     "type": "git",
@@ -17,9 +19,13 @@
   },
   "homepage": "https://github.com/diegoPanino/shop-server#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
+    "dotenv": "^11.0.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.14",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "pg": "^8.7.1"
   }
 }
