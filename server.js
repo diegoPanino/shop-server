@@ -26,13 +26,24 @@ const db = knex({
 
 app.get('/',(req,res)=>{res.send('<marquee>Emporium BackEnd</marquee>')})
 
+app.get('/user',authenticationToken,(req,res)=>{
+	const {email} = req.user
+	db.select('email','name','avatar').from('user').where('email','=',email)
+	.then(user => {
+		res.send(user[0])
+	})
+	.catch(err => {
+		console.log('/user ',err)
+		res.status(500).send(err)
+	})
+})
+
 function authenticationToken(req,res,next){
-	const authHeader = req.headers['authorization']
-	const token = authHeader && authHeader.split(' ')[1]
-	if(token === null) return res.sendStatus(401)
+	const token = req.get('Authorization')
+	if(token == null) return res.sendStatus(401)
 
 	jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
-		if(err) return res.sendStatus(403)
+		if(err) return res.status(403).send(err)
 		req.user = user
 		next()
 	})

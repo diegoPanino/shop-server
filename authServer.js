@@ -49,16 +49,15 @@ async function addRefreshToken(token){
 }
 
 function generateAccessToken(user){
-	return jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'30m'})
+	return jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'10m'})
 }
 
 function authenticateToken(req,res,next){
-	const authHeader = req.headers['authorization']
-	const token = authHeader && authHeader.split(' ')[1]
-	if(token == null) return res.status(401).json('token null')
+	const token = req.get('Authorization')
+	if(token == null) return res.status(401)
 
 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err,user)=>{
-		if(err) return res.status(403).json('verify error')
+		if(err) return res.status(403).json(err)
 		req.user = user
 		next()
 	})
@@ -66,14 +65,14 @@ function authenticateToken(req,res,next){
 
 
 app.post('/token',(req,res)=>{
-	const refreshToken = req.body.token
-	if(refreshToken == null) return res.sendStatus(401)
+	const refreshToken = req.get('x-refresh')
+	if(refreshToken == null) return res.status(401).send('refresh token null')
 	
 	authDb.select('refreshToken').from('refreshToken').where('refreshToken','=',refreshToken )
 	.then(data => {
-		if(!data.length) return res.sendStatus(403)
+		if(!data.length) return res.sendStatus(403) //if not in the db
 		jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET,(err,user)=>{
-			if(err) return res.sendStatus(403)
+			if(err) return res.sendStatus(403) //if is not valid
 			const accessToken = generateAccessToken({name:user.name,email:user.email})
 			res.json({accessToken})
 		})	
@@ -81,13 +80,18 @@ app.post('/token',(req,res)=>{
 	
 })
 
-app.delete('/logout', async (req,res) => {
-	const token = req.body.refreshToken
-	const result = await authDb.select('refreshToken').from('refreshToken').where('refreshToken','=',token )
-	if(!result.data.length) return res.sendStatus(401)
-	const isDelete = authDb('refreshToken').where('refreshToken',token).del()
-	if(isDelete) return res.sendStatus(200)
-	return res.Status(401)
+app.delete('/logout',authenticateToken, async (req,res) => {
+	const token = req.get('x-refresh')
+	try{
+		const result = await authDb.select('refreshToken').from('refreshToken').where('refreshToken','=',token )
+		if(!result[0].refreshToken.length) return res.sendStatus(401)
+		const isDelete = authDb('refreshToken').where('refreshToken',token).del()
+		if(isDelete) return res.sendStatus(200)
+		return res.Status(401)
+	}
+	catch(err){
+		console.log('authServer.js log out err',err)
+	}
 })
 app.post('/signup',(req,res)=>{
 	const {username,email,psw} = req.body
