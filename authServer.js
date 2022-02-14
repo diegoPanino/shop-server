@@ -1,3 +1,4 @@
+import signIn from './controller/signInController.js'
 require('dotenv').config()
 
 const express = require('express')
@@ -150,5 +151,5 @@ app.post('/login',(req,res)=>{
 })
 
 app.listen(4001,()=>{
-	console.log('Server listen on 4001')
+	console.log('Auth Server listen on 4001')
 })
