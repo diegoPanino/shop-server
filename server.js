@@ -1,32 +1,34 @@
-require('dotenv').config()
-
 const express = require('express')
-const knex = require('knex')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const dbPsw = process.env.DB_PSW
+const {db} = require('./config/connDb.js')
+const {logger} = require('./middleware/logEvents.js')
+const corsOptions = require ('./config/corsOption.js')
+const credentials = require ('./middleware/credentials.js')
 
 const saltRounds = 10
 const salt = bcrypt.genSaltSync(saltRounds);
 
 const app = express()
-app.use(cors())
+app.use(logger)
+app.use(credentials)
+app.use(cors(corsOptions))
+app.use(express.urlencoded({extended:false}))
 app.use(express.json())
-
-const db = knex({
-	client:'pg',
-	connection:{
-		host:'127.0.0.1',
-		user:'postgres',
-		password:dbPsw,
-		database:'emporium'
-	}
-})
+app.use(cookieParser())
 
 app.get('/',(req,res)=>{res.send('<marquee>Emporium BackEnd</marquee>')})
-
-app.get('/user',authenticationToken,(req,res)=>{
+/*app.get('*',(req,res)=>{
+	console.log('server *')
+	res.sendStatus(204)
+})*/
+app.get('/user',(req,res)=>{
+	console.log('Server')
+	res.sendStatus(204)
+})
+/*app.get('/user',authenticationToken,(req,res)=>{
 	const {email} = req.user
 	db.select('email','name','avatar').from('user').where('email','=',email)
 	.then(user => {
@@ -36,7 +38,7 @@ app.get('/user',authenticationToken,(req,res)=>{
 		console.log('/user ',err)
 		res.status(500).send(err)
 	})
-})
+})*/
 
 function authenticationToken(req,res,next){
 	const token = req.get('Authorization')

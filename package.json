@@ -20,12 +20,16 @@
   "homepage": "https://github.com/diegoPanino/shop-server#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "date-fns": "^2.28.0",
     "dotenv": "^11.0.0",
     "express": "^4.17.1",
+    "http-proxy-middleware": "^2.0.3",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.14",
     "nodemon": "^2.0.15",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "uuid": "^8.3.2"
   }
 }
