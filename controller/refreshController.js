@@ -36,7 +36,7 @@ const handleRefreshToken = async (req,res) => {
 	
 	//generate new accessToken
 	const accessToken = generateAccessToken({email:userEmail[0].email,id:decoded.id})
-	res.status(200).send({a:accessToken})
+	res.status(200).send({a:accessToken,user:userEmail[0].email})
 }
 
 module.exports = {saveRefreshToken,handleRefreshToken}
